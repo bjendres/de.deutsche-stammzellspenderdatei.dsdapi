@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<extension key="de.deutsche-stammzellspenderdatei.dsdapi" type="module">
+  <file>dsdapi</file>
+  <name>Deutsche Stammzellspenderdatei API</name>
+  <description>Provides custom API entities and actions.</description>
+  <license>AGPL-3.0</license>
+  <maintainer>
+    <author>SYSTOPIA</author>
+    <email>info@systopia.de</email>
+  </maintainer>
+  <urls>
+    <url desc="Main Extension Page">https://github.com/systopia/de.deutsche-stammzellspenderdatei.dsdapi</url>
+    <url desc="Documentation">https://github.com/systopia/de.deutsche-stammzellspenderdatei.dsdapi/blob/master/README.md</url>
+    <url desc="Support">https://github.com/systopia/de.deutsche-stammzellspenderdatei.dsdapi/issues</url>
+    <url desc="Licensing">http://www.gnu.org/licenses/agpl-3.0.html</url>
+  </urls>
+  <releaseDate></releaseDate>
+  <version>0.1-dev</version>
+  <develStage>dev</develStage>
+  <compatibility>
+    <ver>4.7</ver>
+  </compatibility>
+  <comments></comments>
+  <civix>
+    <namespace>CRM/Dsdapi</namespace>
+  </civix>
+</extension>
