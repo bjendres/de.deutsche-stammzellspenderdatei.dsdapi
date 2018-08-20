@@ -39,6 +39,7 @@ function civicrm_api3_d_s_d_contact_update_submit($params) {
       'external_identifier',
       'email',
       'prefix_id',
+      'formal_title',
       'first_name',
       'last_name',
       'birth_date',
@@ -54,8 +55,11 @@ function civicrm_api3_d_s_d_contact_update_submit($params) {
         'api_error'
       );
     }
-    if ($contact['count'] == 1) {
+    elseif ($contact['count'] == 1) {
       $contact_data['id'] = reset($contact['values'])['id'];
+    }
+    else {
+      $contact_data['contact_type'] = 'Individual';
     }
     $contact = civicrm_api3('Contact', 'create', $contact_data);
     if ($contact['is_error']) {
@@ -63,6 +67,36 @@ function civicrm_api3_d_s_d_contact_update_submit($params) {
         E::ts('Could not create or update the contact.'),
         'api_error'
       );
+    }
+    // Update e-mail address.
+    if (!empty($params['email'])) {
+      $email_data = array(
+        'contact_id' => $contact['id'],
+        'location_type_id' => CRM_Dsdapi_Submission::LOCATION_TYPE_ID_HOME,
+        'email' => $params['email'],
+        'is_primary' => 1,
+      );
+      $email = civicrm_api3('Email', 'get', array(
+        'contact_id' => $contact['id'],
+        'lcoation_type_id' => CRM_Dsdapi_Submission::LOCATION_TYPE_ID_HOME,
+        'is_primary' => 1,
+      ));
+      if ($email['count'] > 1) {
+        throw new CiviCRM_API3_Exception(
+          E::ts('Found more than one e-mail address for the given contact.'),
+          'api_error'
+        );
+      }
+      if ($email['count'] == 1) {
+        $email_data['id'] = reset($email['values'])['id'];
+      }
+      $email = civicrm_api3('Email', 'create', $email_data);
+      if ($email['is_error']) {
+        throw new CiviCRM_API3_Exception(
+          E::ts('Could not create or update the contact\'s e-mail address.'),
+          'api_error'
+        );
+      }
     }
 
     // Update or create address.
