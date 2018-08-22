@@ -46,6 +46,13 @@ function civicrm_api3_d_s_d_contact_update_submit($params) {
       'source',
       'created_date',
     )));
+
+    // Derive gender from given prfix.
+    if (!empty($params['prefix_id'])) {
+      $prefix_id = CRM_Core_OptionGroup::getValue('individual_prefix', $params['prefix_id'], 'label');
+      $contact_data['gender'] = CRM_Dsdapi_GenderPrefix::deriveGenderFromPrefix($prefix_id);
+    }
+
     $contact = civicrm_api3('Contact', 'get', array(
       'external_identifier' => $params['external_identifier'],
     ));
@@ -254,12 +261,12 @@ function civicrm_api3_d_s_d_contact_update_submit($params) {
 
     return civicrm_api3_create_success();
   }
-  catch (CiviCRM_API3_Exception $exception) {
+  catch (Exception $exception) {
     if (defined('DSD_API_LOGGING') && DSD_API_LOGGING) {
       CRM_Core_Error::debug_log_message('DSDContactUpdate:submit:Exception caught: ' . $exception->getMessage());
     }
 
-    $extraParams = $exception->getExtraParams();
+    $extraParams = (method_exists($exception, 'getExtraParams') ? $exception->getExtraParams() : array());
 
     return civicrm_api3_create_error($exception->getMessage(), $extraParams);
   }
